@@ -87,61 +87,61 @@ router.delete("/:playgroundId", verifyToken, async (req, res) => {
   }
 });
 
-router.post("/:playgroundId/reviews", verifyToken, async (req, res) => {
+router.post("/:playgroundId/comments", verifyToken, async (req, res) => {
     try {
       req.body.author = req.user._id;
       const playground = await Playground.findById(req.params.playgroundId);
-      playground.reviews.push(req.body);
+      playground.comments.push(req.body);
       await playground.save();
   
-      // Find the newly created review:
-      const newReview = playground.reviews[playground.reviews.length - 1];
+      // Find the newly created comment:
+      const newComment = playground.comments[playground.comments.length - 1];
   
-      newReview._doc.author = req.user;
+      newComment._doc.author = req.user;
   
-      // Respond with the newReview:
-      res.status(201).json(newReview);
+      // Respond with the newcomment:
+      res.status(201).json(newComment);
     } catch (err) {
       res.status(500).json({ err: err.message });
     }
 });
 
-router.put("/:playgroundId/reviews/:reviewId", verifyToken, async (req, res) => {
+router.put("/:playgroundId/comments/:commentId", verifyToken, async (req, res) => {
     try {
       const playground = await Playground.findById(req.params.playgroundId);
-      const review = playground.reviews.id(req.params.reviewId);
+      const comment = playground.comments.id(req.params.commentId);
   
-      // ensures the current user is the author of the review
-      if (review.author.toString() !== req.user._id) {
+      // ensures the current user is the author of the comment
+      if (comment.author.toString() !== req.user._id) {
         return res
           .status(403)
-          .json({ message: "You are not authorized to edit this review" });
+          .json({ message: "You are not authorized to edit this comment" });
       }
   
-      review.text = req.body.text;
+      comment.text = req.body.text;
       await playground.save();
-      res.status(200).json({ message: "Review updated successfully" });
+      res.status(200).json({ message: "comment updated successfully" });
     } catch (err) {
       res.status(500).json({ err: err.message });
     }
 });
 
-router.delete("/:playgroundId/reviews/:reviewId", verifyToken, async (req, res) => {
+router.delete("/:playgroundId/comments/:commentId", verifyToken, async (req, res) => {
     try {
       const playground = await Playground.findById(req.params.playgroundId);
-      const review = playground.reviews.id(req.params.reviewId);
+      const comment = playground.comments.id(req.params.commentId);
   
-      // ensures the current user is the author of the review
-      if (review.author.toString() !== req.user._id) {
+      // ensures the current user is the author of the comment
+      if (comment.author.toString() !== req.user._id) {
         return res
           .status(403)
-          .json({ message: "You are not authorized to delete this review" });
+          .json({ message: "You are not authorized to delete this comment" });
       }
 
-      playground.reviews.remove({ _id: req.params.reviewId });
+      playground.comments.remove({ _id: req.params.commentId });
       await playground.save();
 
-      res.status(200).json({ message: "Review deleted successfully" });
+      res.status(200).json({ message: "comment deleted successfully" });
     } catch (err) {
       res.status(500).json({ err: err.message });
     }
