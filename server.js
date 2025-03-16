@@ -27,6 +27,7 @@ const corsOptions = {
 };
 
 // Middleware
+app.use(cors(corsOptions));
 app.use(cors());
 app.use(express.json());
 app.use(logger('dev'));
