@@ -21,15 +21,14 @@ mongoose.connection.on('connected', () => {
 });
 
 const corsOptions = {
-  origin: "https://kidstop.netlify.app/", 
+  origin: "https://kidstop.netlify.app",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
   credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization']
 };
 
 // Middleware
-app.options('*', cors());
-app.use(cors());
-// app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(logger('dev'));
 
