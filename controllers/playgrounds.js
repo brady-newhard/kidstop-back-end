@@ -3,6 +3,7 @@
 const express = require("express");
 const verifyToken = require("../middleware/verify-token.js");
 const Playground = require("../models/playground.js");
+const mongoose = require("mongoose");
 const router = express.Router();
 
 router.post('/', verifyToken, async (req, res) => {
@@ -19,7 +20,12 @@ router.post('/', verifyToken, async (req, res) => {
 router.get("/", verifyToken, async (req, res) => {
   try {
       const playgrounds = await Playground.find({})
-          .populate("author") 
+          .populate("author")
+          .populate({
+            path: "comments.author",
+            model: "User",
+            select: "username firstName lastName"
+          })
           .sort({ createdAt: "desc" });
       res.status(200).json(playgrounds);
   } catch (err) {
@@ -29,7 +35,25 @@ router.get("/", verifyToken, async (req, res) => {
 
 router.get("/:playgroundId", verifyToken, async (req, res) => {
   try {
-      const playground = await Playground.findById(req.params.playgroundId).populate("author");
+      // Check if playgroundId is undefined or invalid
+      if (!req.params.playgroundId || req.params.playgroundId === 'undefined') {
+        return res.status(400).json({ message: "Invalid playground ID" });
+      }
+
+      // Check if the ID is a valid MongoDB ObjectId
+      if (!mongoose.Types.ObjectId.isValid(req.params.playgroundId)) {
+        return res.status(400).json({ message: "Invalid playground ID format" });
+      }
+
+      // Populate both the playground author and the comment authors
+      const playground = await Playground.findById(req.params.playgroundId)
+        .populate("author")
+        .populate({
+          path: "comments.author",
+          model: "User",
+          select: "username firstName lastName"
+        });
+        
       if (!playground) {
         return res.status(404).json({ message: "Playground not found" });
       }

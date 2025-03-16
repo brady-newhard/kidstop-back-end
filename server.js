@@ -20,6 +20,12 @@ mongoose.connection.on('connected', () => {
   console.log(`Connected to MongoDB ${mongoose.connection.name}.`);
 });
 
+const corsOptions = {
+  origin: "https://kidstop.netlify.app/", 
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true,
+};
+
 // Middleware
 app.use(cors());
 app.use(express.json());
