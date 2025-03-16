@@ -37,7 +37,11 @@ app.use('/auth', authRouter);
 app.use('/test-jwt', testJwtRouter);
 app.use('/users', usersRouter);
 app.use('/playgrounds', playgroundsRouter);
-// Start the server and listen on port 3000
-app.listen(3000, () => {
-  console.log('The express app is ready!');
+
+// Define port - use environment variable for Heroku compatibility
+const PORT = process.env.PORT || 3000;
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
