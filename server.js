@@ -22,7 +22,7 @@ mongoose.connection.on('connected', () => {
 
 const corsOptions = {
   origin: "https://kidstop.netlify.app/", 
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
   credentials: true,
 };
 
