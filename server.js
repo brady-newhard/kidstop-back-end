@@ -21,7 +21,7 @@ mongoose.connection.on('connected', () => {
 });
 
 const corsOptions = {
-  origin: ["http://localhost:5174", "https://kidstop-frontend.netlify.app"],
+  origin: ["http://localhost:5174", "https://kidstop.netlify.app"],
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization']
