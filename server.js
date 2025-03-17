@@ -21,11 +21,12 @@ mongoose.connection.on('connected', () => {
 });
 
 const corsOptions = {
-  origin: "https://kidstop.netlify.app",
+  origin: ["http://localhost:5174", "https://kidstop-frontend.netlify.app"],
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization']
 };
+// kidstop-5ab2b8b813da.herokuapp.com/
 
 // Middleware
 app.use(cors(corsOptions));

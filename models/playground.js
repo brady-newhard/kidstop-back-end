@@ -23,14 +23,17 @@ const playgroundSchema = new mongoose.Schema(
       rating: {
         type: String,
         required: true,
-        enum: ["A", "B", "C", "D", "F"],
+        enum: ["⭐️", "⭐️⭐️", "⭐️⭐️⭐️", "⭐️⭐️⭐️⭐️", "⭐️⭐️⭐️⭐️⭐️"],
+      },
+      location: {
+        type: String, 
+        required: true, 
       },
       author: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
       comments: [commentSchema],
     },
     { timestamps: true }
 );
-// playgroundSchema.index({ location: '2dsphere' });
 
 const Playground = mongoose.model("Playground", playgroundSchema);
 
