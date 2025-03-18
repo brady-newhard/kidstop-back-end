@@ -81,37 +81,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-
-const allowedOrigins = [
-  'https://kidstop.netlify.app', 
-  'http://localhost:5173',
-  'http://127.0.0.1:5173', 
-];
-
-app.use((req, res, next) => {
-  if (
-    process.env.NODE_ENV === 'production' &&
-    req.headers['x-forwarded-proto'] !== 'https'
-  ) {
-    return res.redirect(`https://${req.headers.host}${req.url}`);
-  }
-  next();
-});
-
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      console.log('Incoming request from origin:', origin);
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.error('Blocked by CORS:', origin);
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    methods: 'GET, POST, PUT, DELETE, OPTIONS',
-    credentials: true,
-  })
-);
-app.options('*', cors());
