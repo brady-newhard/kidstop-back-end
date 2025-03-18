@@ -39,14 +39,3 @@ const playgroundSchema = new mongoose.Schema(
 const Playground = mongoose.model("Playground", playgroundSchema);
 
 module.exports = Playground;
-
-
-
-
-
-
-
-
-// enum: ["⭐️", "⭐️⭐️", "⭐️⭐️⭐️", "⭐️⭐️⭐️⭐️", "⭐️⭐️⭐️⭐️⭐️"],
-
-

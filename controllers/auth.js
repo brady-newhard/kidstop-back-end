@@ -20,7 +20,7 @@ router.post('/sign-up', async (req, res) => {
       hashedPassword: bcrypt.hashSync(req.body.password, saltRounds),
       firstName: req.body.firstName,
       email: req.body.email,
-      lastName: req.body.lastName // optional field
+      lastName: req.body.lastName
     });
 
     const payload = { username: user.username, _id: user._id, firstName: user.firstName };
