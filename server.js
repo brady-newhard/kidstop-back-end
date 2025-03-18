@@ -20,55 +20,44 @@ mongoose.connection.on('connected', () => {
   console.log(`Connected to MongoDB ${mongoose.connection.name}.`);
 });
 
-// const allowedOrigins = [
-//   'https://kidstop.netlify.app', 
-//   'http://localhost:5173',
-//   'http://127.0.0.1:5173', 
-// ];
+const allowedOrigins = [
+  'https://kidstop.netlify.app', 
+  'http://localhost:5173',
+  'http://127.0.0.1:5173', 
+];
 
-// app.use((req, res, next) => {
-//   if (
-//     process.env.NODE_ENV === 'production' &&
-//     req.headers['x-forwarded-proto'] !== 'https'
-//   ) {
-//     return res.redirect(`https://${req.headers.host}${req.url}`);
-//   }
-//   next();
-// });
+// Redirect to HTTPS in production
+app.use((req, res, next) => {
+  if (
+    process.env.NODE_ENV === 'production' &&
+    req.headers['x-forwarded-proto'] !== 'https'
+  ) {
+    return res.redirect(`https://${req.headers.host}${req.url}`);
+  }
+  next();
+});
 
-// app.use(
-//   cors({
-//     origin: function (origin, callback) {
-//       console.log('Incoming request from origin:', origin);
-//       if (!origin || allowedOrigins.includes(origin)) {
-//         callback(null, true);
-//       } else {
-//         console.error('Blocked by CORS:', origin);
-//         callback(new Error('Not allowed by CORS'));
-//       }
-//     },
-//     methods: 'GET, POST, PUT, DELETE, OPTIONS',
-//     credentials: true,
-//   })
-// );
-// app.options('*', cors());
+// Configure CORS
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.error('Blocked by CORS:', origin);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: 'GET, POST, PUT, DELETE, OPTIONS',
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization']
+  })
+);
 
-// const corsOptions = {
-//   origin: ["http://localhost:5173", "https://kidstop-5ab2b8b813da.herokuapp.com", "https://kidstop.netlify.app"],
-//   methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
-//   credentials: true,
-//   allowedHeaders: ['Content-Type', 'Authorization']
-// };
-// kidstop-5ab2b8b813da.herokuapp.com/
+// Handle OPTIONS requests explicitly
+app.options('*', cors());
 
-// Middleware
-// app.options('*', cors(corsOptions));
-// app.use(cors(corsOptions));
-// app.use(cors({
-//   origin: process.env.CLIENT_URL || 'http://localhost:5173',
-//   credentials: true,
-// }));
-app.use(cors());
 app.use(express.json());
 app.use(logger('dev'));
 
