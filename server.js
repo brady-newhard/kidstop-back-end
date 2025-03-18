@@ -6,7 +6,7 @@ const app = express();
 const mongoose = require('mongoose');
 const cors = require('cors');
 const logger = require('morgan');
-
+app.use(cors({ origin: true }));
 // Import routers
 const authRouter = require('./controllers/auth');
 const testJwtRouter = require('./controllers/test-jwt');
@@ -31,7 +31,7 @@ mongoose.connection.on('connected', () => {
 // Middleware
 // app.options('*', cors(corsOptions));
 // app.use(cors(corsOptions));
-app.use(cors({ origin: true }));
+
 app.use(express.json());
 app.use(logger('dev'));
 
