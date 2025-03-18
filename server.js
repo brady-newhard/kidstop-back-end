@@ -6,7 +6,7 @@ const app = express();
 const mongoose = require('mongoose');
 const cors = require('cors');
 const logger = require('morgan');
-app.use(cors({ origin: true }));
+// app.use(cors({ origin: true }));
 // Import routers
 const authRouter = require('./controllers/auth');
 const testJwtRouter = require('./controllers/test-jwt');
@@ -19,6 +19,39 @@ mongoose.connect(process.env.MONGODB_URI);
 mongoose.connection.on('connected', () => {
   console.log(`Connected to MongoDB ${mongoose.connection.name}.`);
 });
+
+const allowedOrigins = [
+  'https://kidstop.netlify.app', 
+  'http://localhost:5173',
+  'http://127.0.0.1:5173', 
+];
+
+app.use((req, res, next) => {
+  if (
+    process.env.NODE_ENV === 'production' &&
+    req.headers['x-forwarded-proto'] !== 'https'
+  ) {
+    return res.redirect(`https://${req.headers.host}${req.url}`);
+  }
+  next();
+});
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      console.log('Incoming request from origin:', origin);
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.error('Blocked by CORS:', origin);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: 'GET, POST, PUT, DELETE, OPTIONS',
+    credentials: true,
+  })
+);
+app.options('*', cors());
 
 // const corsOptions = {
 //   origin: ["http://localhost:5173", "https://kidstop-5ab2b8b813da.herokuapp.com", "https://kidstop.netlify.app"],
@@ -50,35 +83,35 @@ app.listen(PORT, () => {
 });
 
 
-// const allowedOrigins = [
-//   'https://kidstop.netlify.app', 
-//   'http://localhost:5173',
-//   'http://127.0.0.1:5173', 
-// ];
+const allowedOrigins = [
+  'https://kidstop.netlify.app', 
+  'http://localhost:5173',
+  'http://127.0.0.1:5173', 
+];
 
-// app.use((req, res, next) => {
-//   if (
-//     process.env.NODE_ENV === 'production' &&
-//     req.headers['x-forwarded-proto'] !== 'https'
-//   ) {
-//     return res.redirect(`https://${req.headers.host}${req.url}`);
-//   }
-//   next();
-// });
+app.use((req, res, next) => {
+  if (
+    process.env.NODE_ENV === 'production' &&
+    req.headers['x-forwarded-proto'] !== 'https'
+  ) {
+    return res.redirect(`https://${req.headers.host}${req.url}`);
+  }
+  next();
+});
 
-// app.use(
-//   cors({
-//     origin: function (origin, callback) {
-//       console.log('Incoming request from origin:', origin);
-//       if (!origin || allowedOrigins.includes(origin)) {
-//         callback(null, true);
-//       } else {
-//         console.error('Blocked by CORS:', origin);
-//         callback(new Error('Not allowed by CORS'));
-//       }
-//     },
-//     methods: 'GET, POST, PUT, DELETE, OPTIONS',
-//     credentials: true,
-//   })
-// );
-// app.options('*', cors());
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      console.log('Incoming request from origin:', origin);
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.error('Blocked by CORS:', origin);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: 'GET, POST, PUT, DELETE, OPTIONS',
+    credentials: true,
+  })
+);
+app.options('*', cors());
