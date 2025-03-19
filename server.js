@@ -10,7 +10,6 @@ const allowedOrigins = [
   'https://kidstop.netlify.app', // Netlify Frontend
   'http://localhost:5173',
   'http://127.0.0.1:5173', // Local backend
-  'https://kidstop-5ab2b8b813da.herokuapp.com' // Uncommented Heroku backend
 ];
 
 // Redirect to HTTPS in production

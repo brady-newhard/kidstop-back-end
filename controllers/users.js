@@ -15,6 +15,15 @@ router.get('/', verifyToken, async (req, res) => {
   }
 });
 
+router.get('/allUsers', verifyToken, async (req, res) => {
+  try {
+    const users = await User.find({}, 'username');
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+});
+
 router.get('/:userId', verifyToken, async (req, res) => {
   try {
     if (req.user._id !== req.params.userId){
