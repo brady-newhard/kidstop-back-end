@@ -10,6 +10,7 @@ const allowedOrigins = [
   'https://kidstop.netlify.app', // Netlify Frontend
   'http://localhost:5173',
   'http://127.0.0.1:5173', // Local backend
+  'https://kidstop-5ab2b8b813da.herokuapp.com' // Heroku backend
 ];
 
 // Redirect to HTTPS in production
@@ -25,23 +26,26 @@ app.use((req, res, next) => {
 
 // Simplified CORS configuration - apply this first
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      console.log('CORS blocked origin:', origin);
-      callback(null, true); // Temporarily allow all origins for debugging
-    }
-  },
+  origin: true, // Allow requests from any origin for debugging
   credentials: true,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   allowedHeaders: ['Content-Type', 'Authorization', 'x-access-token', 'Origin', 'Accept'],
+  exposedHeaders: ['Access-Control-Allow-Origin', 'Access-Control-Allow-Methods', 'Access-Control-Allow-Headers'],
   preflightContinue: false,
   optionsSuccessStatus: 204
 }));
+
+// Add a middleware to explicitly set CORS headers for all responses
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-access-token, Origin, Accept');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  // Log all requests for debugging
+  console.log(`${req.method} request for ${req.url} from origin: ${req.headers.origin}`);
+  next();
+});
 
 // Handle OPTIONS requests explicitly
 app.options('*', (req, res) => {
