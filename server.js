@@ -10,7 +10,7 @@ const allowedOrigins = [
   'https://kidstop.netlify.app', // Netlify Frontend
   'http://localhost:5173',
   'http://127.0.0.1:5173', // Local backend
-  // 'https://kidstop-5ab2b8b813da.herokuapp.com'
+  'https://kidstop-5ab2b8b813da.herokuapp.com' // Uncommented Heroku backend
 ];
 
 app.use((req, res, next) => {
@@ -35,11 +35,32 @@ app.use(
       }
     },
     methods: 'GET, POST, PUT, DELETE, OPTIONS',
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-access-token', 'Origin', 'Accept'],
+    exposedHeaders: ['Content-Length', 'Authorization'],
     credentials: true,
+    maxAge: 86400 // 24 hours
   })
 );
 
+// Add a middleware to set CORS headers explicitly for all responses
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-access-token, Origin, Accept');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+});
+
 app.options('*', cors());
+
+// Handle OPTIONS requests explicitly
+app.options('*', (req, res) => {
+  res.status(200).end();
+});
+
 app.use(express.json());
 app.use(logger('dev'));
 
