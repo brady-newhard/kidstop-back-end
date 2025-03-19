@@ -1,24 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const cors = require('cors');
-
 const User = require('../models/user');
+const jwt = require('jsonwebtoken');
 
 const saltRounds = 12;
-
-// Apply CORS specifically to auth routes
-const corsOptions = {
-  origin: ['https://kidstop.netlify.app', 'http://localhost:5173', 'http://127.0.0.1:5173', 'https://kidstop-5ab2b8b813da.herokuapp.com'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-  optionsSuccessStatus: 204
-};
-
-// Apply CORS to all auth routes
-router.use(cors(corsOptions));
 
 router.post('/sign-up', async (req, res) => {
   try {

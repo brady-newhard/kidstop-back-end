@@ -10,7 +10,7 @@ const allowedOrigins = [
   'https://kidstop.netlify.app', // Netlify Frontend
   'http://localhost:5173',
   'http://127.0.0.1:5173', // Local backend
-  'https://kidstop-5ab2b8b813da.herokuapp.com'
+  // 'https://kidstop-5ab2b8b813da.herokuapp.com'
 ];
 
 app.use((req, res, next) => {
@@ -69,7 +69,6 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
 
 
 // CORS configuration - simplifying to the most reliable approach
