@@ -56,32 +56,10 @@ app.use(express.json());
 app.use(logger('dev'));
 
 // Connect to MongoDB
-console.log('Attempting to connect to MongoDB...');
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log(`Connected to MongoDB ${mongoose.connection.name}.`);
-    
-    // Only start the server after successful DB connection
-    const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  })
-  .catch(err => {
-    console.error('MongoDB connection error:', err.message);
-    process.exit(1); // Exit with error
-  });
+mongoose.connect(process.env.MONGODB_URI);
 
 mongoose.connection.on('connected', () => {
-  console.log(`MongoDB connection event: connected to ${mongoose.connection.name}.`);
-});
-
-mongoose.connection.on('error', (err) => {
-  console.error('MongoDB connection error event:', err);
-});
-
-mongoose.connection.on('disconnected', () => {
-  console.log('MongoDB disconnected');
+  console.log(`Connected to MongoDB ${mongoose.connection.name}.`);
 });
 
 // Import routers
@@ -95,6 +73,14 @@ app.use('/auth', authRouter);
 app.use('/test-jwt', testJwtRouter);
 app.use('/users', usersRouter);
 app.use('/playgrounds', playgroundsRouter);
+
+// Define port - use environment variable for Heroku compatibility
+const PORT = process.env.PORT || 3000;
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 // Commented out old CORS configurations that were creating complexity
 // const corsOptions = {
