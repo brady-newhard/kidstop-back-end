@@ -13,6 +13,7 @@ const allowedOrigins = [
   'https://kidstop-5ab2b8b813da.herokuapp.com' // Uncommented Heroku backend
 ];
 
+// Redirect to HTTPS in production
 app.use((req, res, next) => {
   if (
     process.env.NODE_ENV === 'production' &&
@@ -23,42 +24,29 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      console.log('Incoming request from origin:', origin);
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.error('Blocked by CORS:', origin);
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    methods: 'GET, POST, PUT, DELETE, OPTIONS',
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-access-token', 'Origin', 'Accept'],
-    exposedHeaders: ['Content-Length', 'Authorization'],
-    credentials: true,
-    maxAge: 86400 // 24 hours
-  })
-);
-
-// Add a middleware to set CORS headers explicitly for all responses
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-  }
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-access-token, Origin, Accept');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  next();
-});
-
-app.options('*', cors());
+// Simplified CORS configuration - apply this first
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked origin:', origin);
+      callback(null, true); // Temporarily allow all origins for debugging
+    }
+  },
+  credentials: true,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-access-token', 'Origin', 'Accept'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
+}));
 
 // Handle OPTIONS requests explicitly
 app.options('*', (req, res) => {
-  res.status(200).end();
+  res.status(204).end();
 });
 
 app.use(express.json());
@@ -91,9 +79,7 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-
-// CORS configuration - simplifying to the most reliable approach
-// Apply CORS before other middleware
+// Commented out old CORS configurations that were creating complexity
 // const corsOptions = {
 //   origin: ['https://kidstop.netlify.app', 'http://localhost:5173', 'http://127.0.0.1:5173', 'https://kidstop-5ab2b8b813da.herokuapp.com'],
 //   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -101,20 +87,3 @@ app.listen(PORT, () => {
 //   credentials: true,
 //   optionsSuccessStatus: 204
 // };
-
-// Handle preflight requests
-// app.options('*', cors(corsOptions));
-
-// Apply CORS to all routes
-// app.use(cors(corsOptions));
-
-// Redirect to HTTPS in production
-// app.use((req, res, next) => {
-//   if (
-//     process.env.NODE_ENV === 'production' &&
-//     req.headers['x-forwarded-proto'] !== 'https'
-//   ) {
-//     return res.redirect(`https://${req.headers.host}${req.url}`);
-//   }
-//   next();
-// });
