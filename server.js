@@ -23,7 +23,7 @@ mongoose.connection.on('connected', () => {
 // CORS configuration - simplifying to the most reliable approach
 // Apply CORS before other middleware
 const corsOptions = {
-  origin: ['https://kidstop.netlify.app', 'http://localhost:5173', 'http://127.0.0.1:5173'],
+  origin: ['https://kidstop.netlify.app', 'http://localhost:5173', 'http://127.0.0.1:5173', 'https://kidstop-5ab2b8b813da.herokuapp.com'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,

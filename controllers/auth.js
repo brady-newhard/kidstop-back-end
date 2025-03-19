@@ -10,7 +10,7 @@ const saltRounds = 12;
 
 // Apply CORS specifically to auth routes
 const corsOptions = {
-  origin: ['https://kidstop.netlify.app', 'http://localhost:5173', 'http://127.0.0.1:5173'],
+  origin: ['https://kidstop.netlify.app', 'http://localhost:5173', 'http://127.0.0.1:5173', 'https://kidstop-5ab2b8b813da.herokuapp.com'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -47,12 +47,6 @@ router.post('/sign-up', async (req, res) => {
 });
 
 router.post('/sign-in', async (req, res) => {
-  // Explicitly set CORS headers for this specific route
-  res.header('Access-Control-Allow-Origin', 'https://kidstop.netlify.app');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  
   try {
     const user = await User.findOne({ username: req.body.username });
     if (!user) {
